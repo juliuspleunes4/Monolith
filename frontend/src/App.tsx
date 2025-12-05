@@ -91,6 +91,10 @@ function App() {
     }
   };
 
+  const handleCloseConversation = () => {
+    setActiveConversationId(null);
+  };
+
   const handleUpdateConversation = (updatedConversation: Conversation) => {
     const exists = conversations.some(c => c.id === updatedConversation.id);
     
@@ -114,6 +118,7 @@ function App() {
         onNewConversation={handleNewConversation}
         onSelectConversation={handleSelectConversation}
         onDeleteConversation={handleDeleteConversation}
+        onCloseConversation={handleCloseConversation}
         selectedModel={selectedModel}
         onModelChange={setSelectedModel}
       />

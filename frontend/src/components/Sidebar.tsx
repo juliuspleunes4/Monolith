@@ -9,6 +9,7 @@ interface SidebarProps {
   onNewConversation: () => void;
   onSelectConversation: (id: string) => void;
   onDeleteConversation: (id: string) => void;
+  onCloseConversation: () => void;
   selectedModel: string;
   onModelChange: (model: string) => void;
 }
@@ -19,6 +20,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onNewConversation,
   onSelectConversation,
   onDeleteConversation,
+  onCloseConversation,
   selectedModel,
   onModelChange,
 }) => {
@@ -42,7 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const handleLogoClick = () => {
-    onNewConversation();
+    onCloseConversation();
   };
 
   return (
