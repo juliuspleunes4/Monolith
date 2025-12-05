@@ -34,9 +34,18 @@ function App() {
   };
 
   const handleUpdateConversation = (updatedConversation: Conversation) => {
-    setConversations(conversations.map(c => 
-      c.id === updatedConversation.id ? updatedConversation : c
-    ));
+    const exists = conversations.some(c => c.id === updatedConversation.id);
+    
+    if (exists) {
+      // Update existing conversation
+      setConversations(conversations.map(c => 
+        c.id === updatedConversation.id ? updatedConversation : c
+      ));
+    } else {
+      // Add new conversation
+      setConversations([updatedConversation, ...conversations]);
+      setActiveConversationId(updatedConversation.id);
+    }
   };
 
   return (

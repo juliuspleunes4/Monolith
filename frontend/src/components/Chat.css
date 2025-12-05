@@ -74,7 +74,7 @@
 
 .suggestion-btn:hover:not(:disabled) {
   background-color: var(--bg-tertiary);
-  border-color: var(--accent-color);
+  border-color: #5170ff;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }

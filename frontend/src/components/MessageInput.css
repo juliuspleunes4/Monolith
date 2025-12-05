@@ -25,8 +25,8 @@
 }
 
 .message-input-wrapper:focus-within {
-  border-color: var(--accent-color);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  border-color: #5170ff;
+  box-shadow: 0 2px 12px rgba(81, 112, 255, 0.2);
 }
 
 .input-left {
@@ -38,13 +38,20 @@
 }
 
 .input-label {
+  position: absolute;
+  left: 68px;
   font-size: 16px;
   font-weight: 400;
   color: var(--text-tertiary);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: -0.01em;
-  flex-shrink: 0;
+  pointer-events: none;
   opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.input-label.hidden {
+  opacity: 0;
 }
 
 .input-right {

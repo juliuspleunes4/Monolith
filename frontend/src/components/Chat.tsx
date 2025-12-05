@@ -12,8 +12,29 @@ interface ChatProps {
 const Chat: React.FC<ChatProps> = ({ conversation, selectedModel, onUpdateConversation }) => {
   const [isStreaming, setIsStreaming] = useState(false);
 
+  console.log('Chat component - selectedModel:', selectedModel);
+
   const handleSendMessage = async (content: string) => {
-    if (!conversation || !selectedModel) return;
+    console.log('Chat - handleSendMessage called with:', content);
+    console.log('Chat - conversation:', conversation);
+    console.log('Chat - selectedModel:', selectedModel);
+    
+    if (!selectedModel) {
+      console.error('Chat - Missing selectedModel!');
+      return;
+    }
+
+    // Create a new conversation if none exists
+    let currentConversation = conversation;
+    if (!currentConversation) {
+      currentConversation = {
+        id: crypto.randomUUID(),
+        title: content.slice(0, 50),
+        messages: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    }
 
     // Add user message
     const userMessage: Message = {
@@ -24,10 +45,10 @@ const Chat: React.FC<ChatProps> = ({ conversation, selectedModel, onUpdateConver
     };
 
     const updatedConversation = {
-      ...conversation,
-      messages: [...conversation.messages, userMessage],
+      ...currentConversation,
+      messages: [...currentConversation.messages, userMessage],
       updatedAt: new Date(),
-      title: conversation.messages.length === 0 ? content.slice(0, 50) : conversation.title,
+      title: currentConversation.messages.length === 0 ? content.slice(0, 50) : currentConversation.title,
     };
 
     onUpdateConversation(updatedConversation);

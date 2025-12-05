@@ -20,6 +20,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, disabled }) 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && !disabled) {
+      console.log('MessageInput - Sending message:', message.trim());
       onSendMessage(message.trim());
       setMessage('');
     }
@@ -48,7 +49,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, disabled }) 
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
             </button>
-            <div className="input-label">Ask anything...</div>
+            <div className={`input-label ${message ? 'hidden' : ''}`}>Ask anything...</div>
             <textarea
               ref={textareaRef}
               className="message-input"
