@@ -82,6 +82,7 @@ async def generate_streaming_ollama(
                         try:
                             import json
                             chunk = json.loads(line)
+                            logger.debug(f"Ollama chunk: {chunk}")
                             
                             # Check if this is the final message
                             if chunk.get("done", False):
@@ -92,6 +93,7 @@ async def generate_streaming_ollama(
                             message = chunk.get("message", {})
                             content = message.get("content", "")
                             
+                            logger.debug(f"Extracted content: '{content}'")
                             if content:
                                 yield content
                                 

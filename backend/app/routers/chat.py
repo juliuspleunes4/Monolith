@@ -69,6 +69,7 @@ async def chat(request: ChatRequest):
                     top_p=request.top_p,
                 ):
                     data = json.dumps({"token": token})
+                    logger.debug(f"Yielding token: {token}")
                     yield f"data: {data}\n\n"
             else:
                 # Use llama-cpp-python inference
