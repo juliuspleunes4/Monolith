@@ -65,7 +65,9 @@
 
 ### Prerequisites
 
-- **Docker** with Docker Compose
+- **Docker Desktop** - [Download here](https://www.docker.com/products/docker-desktop/)
+  - ⚠️ **Important:** Make sure Docker Desktop is running before executing any `docker` commands
+  - Look for the Docker whale icon in your system tray (it should say "Docker Desktop is running")
 - **NVIDIA GPU** with [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) (for GPU acceleration)
   - Or CPU-only mode (slower but works without GPU)
 
