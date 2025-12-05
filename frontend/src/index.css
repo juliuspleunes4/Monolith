@@ -1,3 +1,39 @@
+:root {
+  /* Light theme colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f7f8;
+  --bg-tertiary: #ececf1;
+  --text-primary: #0d0d0d;
+  --text-secondary: #565869;
+  --text-tertiary: #8e8ea0;
+  --border-color: #d9d9e3;
+  --accent-color: #10a37f;
+  --accent-hover: #0d8c6d;
+  --message-user-bg: #f7f7f8;
+  --message-assistant-bg: #ffffff;
+  --sidebar-width: 260px;
+  --input-bg: #ffffff;
+  --input-text: #0d0d0d;
+  --input-border: #d9d9e3;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #212121;
+  --bg-secondary: #2f2f2f;
+  --bg-tertiary: #3f3f3f;
+  --text-primary: #ececec;
+  --text-secondary: #c5c5d2;
+  --text-tertiary: #8e8ea0;
+  --border-color: #4d4d4f;
+  --accent-color: #19c37d;
+  --accent-hover: #1a9f6b;
+  --message-user-bg: #2f2f2f;
+  --message-assistant-bg: #212121;
+  --input-bg: #2f2f2f;
+  --input-text: #ececec;
+  --input-border: #4d4d4f;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -10,11 +46,39 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: 'Courier New', Courier, monospace;
+  background-color: var(--bg-tertiary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
 }
 
-/* TODO: Add proper styling for chat interface */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+input,
+textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+#root {
+  height: 100vh;
+  overflow: hidden;
+}
