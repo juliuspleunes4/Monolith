@@ -23,7 +23,33 @@ Add these secrets to your repository (Settings → Secrets and variables → Act
 
 ## 🚀 Release Steps
 
-### Step 1: Verify Everything Works Locally
+### Step 1: Update Version and Documentation
+
+**Before creating any tags, ensure all version references are updated:**
+
+1. **Update `docs/CHANGELOG.md`**
+   - Add new version section (e.g., `## [1.1.0] - 2025-12-XX`)
+   - List all changes under appropriate categories:
+     - Added
+     - Changed
+     - Fixed
+     - Removed
+   - Move items from `[Unreleased]` section if applicable
+
+2. **Verify version numbers are consistent across:**
+   - `docs/CHANGELOG.md` - Version header and release date
+   - `.github/RELEASE_NOTES_vX.X.X.md` - Create new file if needed
+   - `README.md` - Update any version-specific references
+   - `backend/app/__init__.py` or `package.json` - If versioned
+
+3. **Commit all documentation updates:**
+   ```bash
+   git add docs/CHANGELOG.md .github/RELEASE_NOTES_*.md README.md
+   git commit -m "docs: prepare for vX.X.X release"
+   git push origin main
+   ```
+
+### Step 2: Verify Everything Works Locally
 
 ```bash
 # Test with pre-built image paths
@@ -34,38 +60,44 @@ cd backend && docker build -t test-backend .
 cd ../frontend && docker build -t test-frontend .
 ```
 
-### Step 2: Create Git Tag
+### Step 3: Create Git Tag and Trigger GitHub Actions
 
 ```bash
 # Ensure you're on main branch with latest changes
 git checkout main
 git pull origin main
 
-# Create annotated tag
+# Create annotated tag (use the version number you documented in Step 1)
 git tag -a v1.0.0 -m "Release v1.0.0 - Initial public release with Docker Hub support"
 
-# Push tag to GitHub
+# Push tag to GitHub - THIS AUTOMATICALLY TRIGGERS GITHUB ACTIONS
 git push origin v1.0.0
 ```
 
-### Step 3: GitHub Actions Will Automatically:
-1. ✅ Build backend and frontend images
-2. ✅ Tag with version (1.0.0, 1.0, 1, latest)
-3. ✅ Push to Docker Hub
+**⚡ Pushing the tag automatically triggers the GitHub Actions workflow** which will:
+
+### Step 4: GitHub Actions Automatically Builds and Publishes
+1. ✅ Build backend and frontend images for linux/amd64 and linux/arm64
+2. ✅ Tag with semantic versions (1.0.0, 1.0, 1, latest)
+3. ✅ Push to Docker Hub repositories
 4. ✅ Create build summary
 
-Monitor progress at: https://github.com/juliuspleunes4/Monolith/actions
+**Monitor progress at:** https://github.com/juliuspleunes4/Monolith/actions
 
-### Step 4: Create GitHub Release
+Wait for the workflow to complete (typically 5-10 minutes). Ensure all jobs show green checkmarks.
+
+### Step 5: Create GitHub Release
+
+Once GitHub Actions completes successfully:
 
 1. Go to https://github.com/juliuspleunes4/Monolith/releases/new
-2. Select tag: `v1.0.0`
+2. Select tag: `v1.0.0` (the tag you created in Step 3)
 3. Release title: `v1.0.0 - Initial Release 🎉`
-4. Copy content from `.github/RELEASE_NOTES_v1.0.0.md`
+4. Copy content from `.github/RELEASE_NOTES_v1.0.0.md` (or the version-specific file you created in Step 1)
 5. Check "Set as the latest release"
 6. Click "Publish release"
 
-### Step 5: Verify Deployment
+### Step 6: Verify Deployment
 
 ```bash
 # Test pulling images

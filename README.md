@@ -540,6 +540,19 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+### 📦 Creating a New Release
+
+For maintainers publishing new versions, we have a complete release pipeline documented:
+
+**[Release Checklist](.github/RELEASE_CHECKLIST.md)** - Complete step-by-step guide covering:
+- Version numbering and CHANGELOG updates
+- Git tag creation and pushing
+- GitHub Release creation
+- Automated Docker Hub publishing via GitHub Actions
+- Post-release verification
+
+The release process is automated via GitHub Actions - just create a version tag (e.g., `v1.1.0`) and push it to trigger automatic Docker image builds and publishing to Docker Hub.
+
 ## ⭐ Show Your Support
 
 Give a ⭐ if this project helped you! It helps others discover Monolith.
