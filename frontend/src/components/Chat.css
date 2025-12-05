@@ -20,6 +20,11 @@
 .empty-icon {
   margin-bottom: 24px;
   opacity: 0.8;
+  color: #000000;
+}
+
+[data-theme="dark"] .empty-icon {
+  color: #ffffff;
 }
 
 .chat-empty h2 {
