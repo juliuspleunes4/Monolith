@@ -36,6 +36,11 @@
   flex: 1;
   text-align: left;
   min-width: 0;
+  display: none;
+}
+
+.sidebar:hover .model-selector-content {
+  display: block;
 }
 
 .model-selector-label {
@@ -56,10 +61,14 @@
 }
 
 .model-selector-chevron {
-  display: flex;
+  display: none;
   align-items: center;
   color: var(--text-tertiary);
   flex-shrink: 0;
+}
+
+.sidebar:hover .model-selector-chevron {
+  display: flex;
 }
 
 .model-dropdown {

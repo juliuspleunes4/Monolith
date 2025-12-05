@@ -1,21 +1,55 @@
 .sidebar {
-  width: var(--sidebar-width);
+  width: 64px;
   background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   height: 100vh;
   flex-shrink: 0;
+  transition: width 0.3s ease;
+  overflow: hidden;
+}
+
+.sidebar:hover {
+  width: var(--sidebar-width);
 }
 
 .sidebar-header {
   padding: 12px;
   border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px;
+}
+
+.logo-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.logo-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  display: none;
+}
+
+.sidebar:hover .logo-text {
+  display: block;
 }
 
 .new-chat-btn {
   width: 100%;
-  padding: 12px 16px;
+  padding: 12px;
   border-radius: 8px;
   background-color: var(--bg-tertiary);
   color: var(--text-primary);
@@ -23,12 +57,31 @@
   font-weight: 500;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, justify-content 0.3s ease, padding 0.3s ease;
+}
+
+.sidebar:hover .new-chat-btn {
+  justify-content: flex-start;
+  padding: 12px 16px;
 }
 
 .new-chat-btn:hover {
   background-color: var(--border-color);
+}
+
+.btn-icon {
+  flex-shrink: 0;
+}
+
+.btn-text {
+  white-space: nowrap;
+  display: none;
+}
+
+.sidebar:hover .btn-text {
+  display: block;
 }
 
 .sidebar-content {
@@ -39,17 +92,22 @@
   flex-direction: column;
   gap: 16px;
 }
-
-.conversations-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
 .empty-state {
   text-align: center;
   padding: 32px 16px;
   color: var(--text-tertiary);
+  display: none;
+}
+
+.sidebar:hover .empty-state {
+  display: block;
+} color: var(--text-tertiary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar:hover .empty-state {
+  opacity: 1;
 }
 
 .empty-state p {
@@ -92,6 +150,11 @@
 .conversation-info {
   flex: 1;
   min-width: 0;
+  display: none;
+}
+
+.sidebar:hover .conversation-info {
+  display: block;
 }
 
 .conversation-title {
@@ -127,22 +190,25 @@
   color: var(--text-primary);
 }
 
-.sidebar-footer {
-  padding: 12px;
-  border-top: 1px solid var(--border-color);
-}
-
 .theme-toggle {
   width: 100%;
-  padding: 12px 16px;
+  padding: 12px;
+  border: none;
   border-radius: 8px;
   background-color: transparent;
   color: var(--text-secondary);
   font-size: 14px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  transition: background-color 0.2s ease;
+  cursor: pointer;
+  transition: background-color 0.2s ease, justify-content 0.3s ease, padding 0.3s ease;
+}
+
+.sidebar:hover .theme-toggle {
+  justify-content: flex-start;
+  padding: 12px 16px;
 }
 
 .theme-toggle:hover {

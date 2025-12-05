@@ -54,3 +54,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - 2025-12-05: Updated suggestion icon color to #5170ff and configured favicon with comprehensive browser/device support
 - 2025-12-05: Changed "Ask anything..." label font size to 14px
 - 2025-12-05: Made cube icon theme-aware - black in light mode, white in dark mode
+- 2025-12-05: Redesigned sidebar to be collapsible - narrow (64px) by default with icon-only view, expands to full width on hover with animated transitions
+- 2025-12-05: Fixed sidebar collapsed state - logo icon visible, + icon visible, theme icon visible, empty state hidden when collapsed
+- 2025-12-05: Perfected sidebar collapse behavior - all text hidden in narrow mode (64px) showing only icons, text appears on hover; favicon image used for logo
