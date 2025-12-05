@@ -2,6 +2,3 @@
 *.ts linguist-language=TypeScript
 *.tsx linguist-language=TypeScript
 *.py linguist-language=Python
-
-# Ensure all other languages are ignored by GitHub Linguist
-* linguist-vendored=true
