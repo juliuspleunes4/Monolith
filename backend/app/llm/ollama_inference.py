@@ -1,11 +1,13 @@
 """Ollama inference engine - automatic GPU acceleration."""
 import logging
+import os
 from typing import AsyncGenerator
 import httpx
 
 logger = logging.getLogger(__name__)
 
-OLLAMA_BASE_URL = "http://localhost:11434"
+# Use environment variable for Ollama host (for Docker networking)
+OLLAMA_BASE_URL = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
 
 async def check_ollama_available() -> bool:

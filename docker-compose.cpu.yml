@@ -1,5 +1,8 @@
+# Docker Compose for CPU-Only Systems (no GPU)
+# Use this if you don't have an NVIDIA GPU or NVIDIA Container Toolkit
+
 services:
-  # Ollama service with GPU support
+  # Ollama service (CPU mode)
   ollama:
     image: ollama/ollama:latest
     container_name: monolith-ollama
@@ -8,13 +11,6 @@ services:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
       interval: 10s
