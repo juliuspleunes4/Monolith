@@ -46,9 +46,14 @@ data/
 *.sqlite3
 
 # Models (large files - should be downloaded separately)
+models/**/*.gguf
 models/*.gguf
 models/*.ggml
 models/*.bin
 
 # Keep README in models directory
 !models/README.md
+
+# Temp files while downloading models
+models/Unconfirmed 153114.crdownload
+models/medium/Unconfirmed 492301.crdownload

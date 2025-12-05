@@ -34,10 +34,10 @@ app = FastAPI(
 )
 
 # CORS configuration
-frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3001")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[frontend_url],
+    allow_origins=[frontend_url, "http://localhost:3000"],  # Support both ports
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

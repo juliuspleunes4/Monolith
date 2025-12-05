@@ -1,0 +1,7 @@
+# Ensure only TypeScript and Python files are treated in GitHub Linguist
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TypeScript
+*.py linguist-language=Python
+
+# Ensure all other languages are ignored by GitHub Linguist
+* linguist-vendored=true

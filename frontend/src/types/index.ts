@@ -16,7 +16,11 @@ export interface Conversation {
 export interface Model {
   id: string;
   name: string;
-  size: string;
+  category: 'small' | 'medium' | 'large';
+  filename: string;
+  size: number;
+  size_mb: number;
+  path: string;
   loaded: boolean;
 }
 

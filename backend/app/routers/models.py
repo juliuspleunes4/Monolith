@@ -1,20 +1,55 @@
 """Models router for managing LLM models."""
 from fastapi import APIRouter
+from pathlib import Path
+import os
 
 router = APIRouter()
+
+# Get models directory from environment or use default
+# Backend runs from backend/ folder, so go up one level to find models/
+MODELS_DIR = Path(os.getenv("MODELS_DIR", "../models"))
+
+
+def scan_models():
+    """Scan the models directory for .gguf files organized by size category."""
+    models = []
+    categories = ["small", "medium", "large"]
+    
+    for category in categories:
+        category_path = MODELS_DIR / category
+        if not category_path.exists():
+            continue
+            
+        # Find all .gguf files in this category
+        for model_file in category_path.glob("*.gguf"):
+            file_size = model_file.stat().st_size
+            models.append({
+                "id": f"{category}/{model_file.name}",
+                "name": model_file.stem,  # filename without extension
+                "category": category,
+                "filename": model_file.name,
+                "size": file_size,
+                "size_mb": round(file_size / (1024 * 1024), 2),
+                "path": str(model_file),
+                "loaded": False  # TODO: track loaded models
+            })
+    
+    return models
 
 
 @router.get("/models")
 async def list_models():
     """
-    List all available LLM models.
+    List all available LLM models organized by size category.
     
-    TODO: Implement models listing with:
-    - Scan MODELS_DIR for .gguf files
-    - Return model metadata (name, size, loaded status)
-    - Handle missing models directory
+    Scans models/small, models/medium, and models/large directories
+    for .gguf files and returns them categorized.
     """
-    return {"models": []}
+    try:
+        models = scan_models()
+        return {"models": models}
+    except Exception as e:
+        return {"models": [], "error": str(e)}
 
 
 @router.post("/models/{model_id}/load")

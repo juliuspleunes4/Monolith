@@ -1,5 +1,6 @@
 .model-selector {
   position: relative;
+  z-index: 1000;
 }
 
 .model-selector-btn {
@@ -21,7 +22,7 @@
 }
 
 .model-selector-btn:disabled {
-  cursor: not-allowed;
+  cursor: not-allowed !important;
   opacity: 0.6;
 }
 
@@ -72,24 +73,59 @@
 }
 
 .model-dropdown {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
+  position: fixed;
+  left: 76px;
+  width: 320px;
   background-color: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-  max-height: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-height: 400px;
   overflow-y: auto;
+}
+
+.sidebar:hover .model-dropdown {
+  left: 12px;
+  width: calc(var(--sidebar-width) - 24px);
+}
+
+.model-category {
+  margin-bottom: 4px;
+}
+
+.model-category:last-child {
+  margin-bottom: 0;
+}
+
+.model-category-badge {
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #5170ff;
+  text-transform: uppercase;
+  background-color: rgba(81, 112, 255, 0.08);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.model-category-badge svg {
+  flex-shrink: 0;
 }
 
 .model-option {
   width: 100%;
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid var(--border-color);
+  border: none;
+  background: transparent;
+  cursor: pointer;
   transition: background-color 0.2s ease;
   display: flex;
   align-items: center;
@@ -97,7 +133,11 @@
   position: relative;
 }
 
-.model-option:last-child {
+.model-category .model-option:last-child {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.model-category:last-child .model-option:last-child {
   border-bottom: none;
 }
 
@@ -117,8 +157,12 @@
 }
 
 .model-option-size {
-  font-size: 12px;
-  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 500;
+  color: #5170ff;
+  background-color: rgba(81, 112, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
 .model-loaded-indicator {

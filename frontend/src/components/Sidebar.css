@@ -7,7 +7,8 @@
   height: 100vh;
   flex-shrink: 0;
   transition: width 0.3s ease;
-  overflow: hidden;
+  overflow-x: visible;
+  overflow-y: hidden;
 }
 
 .sidebar:hover {
@@ -86,12 +87,13 @@
 
 .sidebar-content {
   flex: 1;
-  overflow-y: auto;
+  overflow: visible;
   padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
+
 .empty-state {
   text-align: center;
   padding: 32px 16px;
@@ -105,13 +107,6 @@
 .sidebar:hover .empty-state {
   opacity: 1;
   max-height: 200px;
-} color: var(--text-tertiary);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.sidebar:hover .empty-state {
-  opacity: 1;
 }
 
 .empty-state p {
