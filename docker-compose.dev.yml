@@ -1,8 +1,11 @@
+# Development Docker Compose
+# Use this for local development with live code changes
+
 services:
   # Ollama service with GPU support
   ollama:
     image: ollama/ollama:latest
-    container_name: monolith-ollama
+    container_name: monolith-ollama-dev
     restart: unless-stopped
     ports:
       - "11434:11434"
@@ -25,7 +28,7 @@ services:
   # Model initializer - pulls deepseek-r1:8b on first run
   ollama-init:
     image: ollama/ollama:latest
-    container_name: monolith-ollama-init
+    container_name: monolith-ollama-init-dev
     depends_on:
       ollama:
         condition: service_healthy
@@ -46,20 +49,23 @@ services:
       - OLLAMA_HOST=ollama:11434
     restart: "no"
 
-  # Backend API
+  # Backend API (build from source)
   backend:
-    image: juliuspleunes4/monolith-backend:latest
-    container_name: monolith-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: monolith-backend-dev
     restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
-      - LOG_LEVEL=INFO
+      - LOG_LEVEL=DEBUG
       - MODELS_DIR=/app/models
       - DATA_DIR=/app/data
-      - FRONTEND_URL=http://localhost:3000
+      - FRONTEND_URL=http://localhost:3001
       - OLLAMA_HOST=http://ollama:11434
     volumes:
+      - ./backend/app:/app/app:ro  # Mount source for hot reload
       - backend_data:/app/data
       - ./models:/app/models:ro
     depends_on:
@@ -73,30 +79,32 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
-  # Frontend UI
+  # Frontend UI (build from source)
   frontend:
-    image: juliuspleunes4/monolith-frontend:latest
-    container_name: monolith-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: builder  # Stop at builder stage for dev
+    container_name: monolith-frontend-dev
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3001:3001"
+    volumes:
+      - ./frontend/src:/app/src:ro  # Mount source for hot reload
+      - ./frontend/public:/app/public:ro
     depends_on:
       backend:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3001"]
 
 volumes:
   ollama_data:
-    name: monolith-ollama-data
+    name: monolith-ollama-data-dev
   backend_data:
-    name: monolith-backend-data
+    name: monolith-backend-data-dev
 
 networks:
   default:
-    name: monolith-network
+    name: monolith-network-dev

@@ -2,3 +2,7 @@
 *.ts linguist-language=TypeScript
 *.tsx linguist-language=TypeScript
 *.py linguist-language=Python
+
+# Suppress CSS and HTML files from being counted
+*.css linguist-vendored=true
+*.html linguist-vendored=true
