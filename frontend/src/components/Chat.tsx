@@ -53,26 +53,116 @@ const Chat: React.FC<ChatProps> = ({ conversation, selectedModel, onUpdateConver
 
     onUpdateConversation(updatedConversation);
 
-    // TODO: Implement actual API call with streaming
+    // Call API with streaming
     setIsStreaming(true);
     
-    // Placeholder: simulate assistant response
-    setTimeout(() => {
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: selectedModel,
+          messages: updatedConversation.messages.map(m => ({
+            role: m.role,
+            content: m.content,
+          })),
+          temperature: 0.7,
+          max_tokens: 512,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      
+      if (!reader) {
+        throw new Error('Response body is null');
+      }
+
+      let assistantContent = '';
       const assistantMessage: Message = {
         id: crypto.randomUUID(),
         role: 'assistant',
-        content: 'This is a placeholder response. The backend API is not yet connected.',
+        content: '',
         timestamp: new Date(),
       };
 
+      // Add empty assistant message that will be updated with streaming content
       onUpdateConversation({
         ...updatedConversation,
         messages: [...updatedConversation.messages, assistantMessage],
         updatedAt: new Date(),
       });
 
+      // Read the stream
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            try {
+              const parsed = JSON.parse(data);
+              
+              if (parsed.error) {
+                console.error('API error:', parsed.error);
+                assistantContent += `\n\nError: ${parsed.error}`;
+                break;
+              }
+              
+              if (parsed.done) {
+                console.log('Stream complete');
+                break;
+              }
+              
+              if (parsed.token) {
+                assistantContent += parsed.token;
+                
+                // Update the assistant message with accumulated content
+                onUpdateConversation({
+                  ...updatedConversation,
+                  messages: [...updatedConversation.messages, {
+                    ...assistantMessage,
+                    content: assistantContent,
+                  }],
+                  updatedAt: new Date(),
+                });
+              }
+            } catch (e) {
+              console.error('Failed to parse SSE data:', e);
+            }
+          }
+        }
+      }
+      
+    } catch (error) {
+      console.error('Chat API error:', error);
+      
+      // Add error message
+      const errorMessage: Message = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        content: `Error: Failed to get response from the model. ${error}`,
+        timestamp: new Date(),
+      };
+
+      onUpdateConversation({
+        ...updatedConversation,
+        messages: [...updatedConversation.messages, errorMessage],
+        updatedAt: new Date(),
+      });
+    } finally {
       setIsStreaming(false);
-    }, 1500);
+    }
   };
 
   const suggestions = [

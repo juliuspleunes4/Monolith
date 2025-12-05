@@ -4,4 +4,7 @@ pydantic==2.9.0
 pydantic-settings==2.6.0
 python-multipart==0.0.12
 aiosqlite==0.20.0
-# TODO: Add llama-cpp-python or ollama-python for LLM inference
+httpx==0.27.2
+# TODO: For local inference without external services, install llama-cpp-python
+# This requires Visual Studio C++ Build Tools on Windows
+# For now, using a placeholder that will work without compilation
