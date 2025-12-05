@@ -83,12 +83,14 @@ docker compose up
 ```
 
 **That's it!** The first run will:
-1. ✅ Build frontend and backend containers (~2-5 minutes)
+1. ✅ Pull pre-built images from Docker Hub (~2-3 minutes)
 2. ✅ Start Ollama with GPU support
 3. ✅ Automatically download `deepseek-r1:8b` model (~5GB, 5-10 minutes)
 4. ✅ Launch the UI at http://localhost:3000
 
-**Total setup time:** 10-15 minutes on first run, then instant afterwards!
+**Total setup time:** 5-10 minutes on first run, then instant afterwards!
+
+> **Pre-built images**: No compilation needed! Images are built automatically and published to Docker Hub.
 
 ### GPU Support
 
@@ -137,8 +139,12 @@ docker compose down -v
 # Add more Ollama models
 docker exec -it monolith-ollama ollama pull llama3.2:3b
 
-# Rebuild after code changes
-docker compose up --build
+# Update to latest version
+docker compose pull
+docker compose up
+
+# Development mode (build from source)
+docker compose -f docker-compose.dev.yml up
 ```
 
 ---
