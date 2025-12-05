@@ -20,19 +20,19 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy Python dependencies from builder
-COPY --from=builder /root/.local /root/.local
-
-# Create non-root user
+# Create non-root user first
 RUN useradd -m -u 1000 monolith && \
     mkdir -p /app/data /app/models && \
     chown -R monolith:monolith /app
+
+# Copy Python dependencies from builder to user's local directory
+COPY --from=builder --chown=monolith:monolith /root/.local /home/monolith/.local
 
 # Copy application code
 COPY --chown=monolith:monolith ./app ./app
 
 # Set environment variables
-ENV PATH=/root/.local/bin:$PATH \
+ENV PATH=/home/monolith/.local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
     MODELS_DIR=/app/models \
     DATA_DIR=/app/data

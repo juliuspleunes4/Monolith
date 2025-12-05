@@ -4,6 +4,13 @@ All notable changes to Monolith will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.1] - 2025-12-05
+
+### Fixed
+- **Docker Health Checks**: Changed Ollama health check from `curl` to `ollama list` command (curl not available in ollama/ollama image)
+- **Backend Permissions**: Fixed permission denied error in backend container by copying Python dependencies to non-root user's home directory
+- Applied fixes to all Docker Compose files (docker-compose.yml, docker-compose.dev.yml, docker-compose.cpu.yml)
+
 ## [1.0.0] - 2025-12-05
 
 ### 🎉 Initial Release
