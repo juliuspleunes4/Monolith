@@ -8,6 +8,16 @@ import asyncio
 try:
     from llama_cpp import Llama
     LLAMA_CPP_AVAILABLE = True
+    
+    # Try to detect CUDA availability
+    try:
+        import llama_cpp
+        if hasattr(llama_cpp, '__version__'):
+            logger_init = logging.getLogger(__name__)
+            logger_init.info(f"llama-cpp-python version: {llama_cpp.__version__}")
+    except Exception as e:
+        pass
+        
 except ImportError:
     LLAMA_CPP_AVAILABLE = False
 

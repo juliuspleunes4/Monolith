@@ -50,7 +50,8 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onModelCha
     return acc;
   }, {} as Record<string, Model[]>);
 
-  const categoryOrder: ('small' | 'medium' | 'large')[] = ['small', 'medium', 'large'];
+  // Dynamic category order - Ollama first, then size categories
+  const categoryOrder = ['ollama', 'small', 'medium', 'large'].filter(cat => modelsByCategory[cat]);
 
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -98,7 +99,9 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onModelCha
             if (!categoryModels || categoryModels.length === 0) return null;
 
             const getCategoryIcon = () => {
-              if (category === 'small') {
+              if (category === 'ollama') {
+                return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>;
+              } else if (category === 'small') {
                 return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /></svg>;
               } else if (category === 'medium') {
                 return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="6" /></svg>;

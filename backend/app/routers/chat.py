@@ -6,6 +6,7 @@ from typing import Optional
 import logging
 import json
 from app.llm.inference import generate_streaming
+from app.llm.ollama_inference import generate_streaming_ollama, check_ollama_available
 
 logger = logging.getLogger(__name__)
 
@@ -46,16 +47,40 @@ async def chat(request: ChatRequest):
     async def event_stream():
         """Generate SSE events."""
         try:
-            async for token in generate_streaming(
-                model_id=request.model,
-                messages=messages,
-                temperature=request.temperature,
-                max_tokens=request.max_tokens,
-                top_p=request.top_p,
-            ):
-                # Send token as SSE event
-                data = json.dumps({"token": token})
-                yield f"data: {data}\n\n"
+            # Detect if this is an Ollama model
+            is_ollama = request.model.startswith("ollama:")
+            
+            if is_ollama:
+                # Extract Ollama model name (remove "ollama:" prefix)
+                model_name = request.model.replace("ollama:", "")
+                
+                # Check if Ollama is available
+                if not await check_ollama_available():
+                    error_data = json.dumps({"error": "Ollama is not running. Please start Ollama."})
+                    yield f"data: {error_data}\n\n"
+                    return
+                
+                # Use Ollama inference
+                async for token in generate_streaming_ollama(
+                    model_name=model_name,
+                    messages=messages,
+                    temperature=request.temperature,
+                    max_tokens=request.max_tokens,
+                    top_p=request.top_p,
+                ):
+                    data = json.dumps({"token": token})
+                    yield f"data: {data}\n\n"
+            else:
+                # Use llama-cpp-python inference
+                async for token in generate_streaming(
+                    model_id=request.model,
+                    messages=messages,
+                    temperature=request.temperature,
+                    max_tokens=request.max_tokens,
+                    top_p=request.top_p,
+                ):
+                    data = json.dumps({"token": token})
+                    yield f"data: {data}\n\n"
             
             # Send completion signal
             yield f"data: {json.dumps({'done': True})}\n\n"

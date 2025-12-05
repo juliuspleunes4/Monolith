@@ -2,6 +2,7 @@
 from fastapi import APIRouter
 from pathlib import Path
 import os
+from app.llm.ollama_inference import list_ollama_models, check_ollama_available
 
 router = APIRouter()
 
@@ -31,8 +32,36 @@ def scan_models():
                 "size": file_size,
                 "size_mb": round(file_size / (1024 * 1024), 2),
                 "path": str(model_file),
-                "loaded": False  # TODO: track loaded models
+                "backend": "llama-cpp",
+                "loaded": False
             })
+    
+    return models
+
+
+async def scan_ollama_models():
+    """Scan Ollama for available models."""
+    models = []
+    
+    if not await check_ollama_available():
+        return models
+    
+    ollama_models = await list_ollama_models()
+    
+    for model in ollama_models:
+        model_name = model.get("name", "")
+        size_bytes = model.get("size", 0)
+        
+        models.append({
+            "id": f"ollama:{model_name}",
+            "name": model_name,
+            "category": "ollama",
+            "filename": model_name,
+            "size": size_bytes,
+            "size_mb": round(size_bytes / (1024 * 1024), 2),
+            "backend": "ollama",
+            "loaded": True  # Ollama models are always "loaded"
+        })
     
     return models
 
@@ -40,15 +69,27 @@ def scan_models():
 @router.get("/models")
 async def list_models():
     """
-    List all available LLM models organized by size category.
-    
-    Scans models/small, models/medium, and models/large directories
-    for .gguf files and returns them categorized.
+    List all available LLM models from both local .gguf files and Ollama.
     """
+    import logging
+    logger = logging.getLogger(__name__)
+    
     try:
-        models = scan_models()
-        return {"models": models}
+        # Get local .gguf models
+        local_models = scan_models()
+        logger.info(f"Found {len(local_models)} local .gguf models")
+        
+        # Get Ollama models
+        ollama_models = await scan_ollama_models()
+        logger.info(f"Found {len(ollama_models)} Ollama models")
+        
+        # Combine both
+        all_models = local_models + ollama_models
+        logger.info(f"Returning {len(all_models)} total models")
+        
+        return {"models": all_models}
     except Exception as e:
+        logger.error(f"Error listing models: {e}", exc_info=True)
         return {"models": [], "error": str(e)}
 
 
