@@ -1,18 +1,36 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Message } from '../types';
 import './MessageList.css';
 
 interface MessageListProps {
   messages: Message[];
   isStreaming: boolean;
+  selectedModel?: string;
 }
 
-const MessageList: React.FC<MessageListProps> = ({ messages, isStreaming }) => {
+const MessageList: React.FC<MessageListProps> = ({ messages, isStreaming, selectedModel }) => {
+  // Extract model name from path like "small/gemma-3-1b-it-q4_0.gguf"
+  const getModelDisplayName = () => {
+    if (!selectedModel) return 'Assistant';
+    const fileName = selectedModel.split('/').pop() || '';
+    return fileName.replace('.gguf', '');
+  };
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const handleCopy = async (message: Message) => {
+    try {
+      await navigator.clipboard.writeText(message.content);
+      setCopiedId(message.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (error) {
+      console.error('Failed to copy message:', error);
+    }
+  };
 
   if (messages.length === 0) {
     return (
@@ -45,7 +63,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isStreaming }) => {
             <div className="message-content">
               <div className="message-header">
                 <span className="message-role">
-                  {message.role === 'user' ? 'You' : 'Assistant'}
+                  {message.role === 'user' ? 'You' : getModelDisplayName()}
                 </span>
                 <span className="message-time">
                   {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -56,11 +74,21 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isStreaming }) => {
                 {message.content}
               </div>
               <div className="message-actions">
-                <button className="message-action-btn" title="Copy message">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                  </svg>
+                <button 
+                  className="message-action-btn" 
+                  title={copiedId === message.id ? "Copied!" : "Copy message"}
+                  onClick={() => handleCopy(message)}
+                >
+                  {copiedId === message.id ? (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                  )}
                 </button>
               </div>
             </div>
@@ -76,7 +104,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isStreaming }) => {
             </div>
             <div className="message-content">
               <div className="message-header">
-                <span className="message-role">Assistant</span>
+                <span className="message-role">{getModelDisplayName()}</span>
               </div>
               <div className="typing-indicator">
                 <span></span>

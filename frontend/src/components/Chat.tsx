@@ -168,7 +168,11 @@ const Chat: React.FC<ChatProps> = ({ conversation, selectedModel, onUpdateConver
         </div>
       </div>
 
-      <MessageList messages={conversation.messages} isStreaming={isStreaming} />
+      <MessageList 
+        messages={conversation.messages} 
+        isStreaming={isStreaming}
+        selectedModel={selectedModel}
+      />
       
       <MessageInput
         onSendMessage={handleSendMessage}
