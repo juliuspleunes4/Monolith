@@ -49,3 +49,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - 2025-12-05: Removed "Please select a model" warning and always show suggestion buttons (disabled when no model selected)
 - 2025-12-05: Enhanced suggestion buttons with icons, larger size, better spacing, and improved hover effects in 2-column grid layout
 - 2025-12-05: Changed suggestion icon color to blue (#3b82f6)
+- 2025-12-05: Changed empty state icon to aperture-style SVG icon
+- 2025-12-05: Changed empty state icon to black neural network/cube icon representing AI/LLM models
