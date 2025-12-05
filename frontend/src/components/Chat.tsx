@@ -90,14 +90,8 @@ const Chat: React.FC<ChatProps> = ({ conversation, selectedModel, onUpdateConver
         role: 'assistant',
         content: '',
         timestamp: new Date(),
+        model: selectedModel, // Store which model is responding
       };
-
-      // Add empty assistant message that will be updated with streaming content
-      onUpdateConversation({
-        ...updatedConversation,
-        messages: [...updatedConversation.messages, assistantMessage],
-        updatedAt: new Date(),
-      });
 
       // Read the stream
       while (true) {
@@ -125,6 +119,11 @@ const Chat: React.FC<ChatProps> = ({ conversation, selectedModel, onUpdateConver
               }
               
               if (parsed.token) {
+                // Hide streaming indicator on first token
+                if (assistantContent === '') {
+                  setIsStreaming(false);
+                }
+                
                 assistantContent += parsed.token;
                 
                 // Update the assistant message with accumulated content

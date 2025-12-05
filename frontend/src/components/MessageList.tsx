@@ -10,9 +10,11 @@ interface MessageListProps {
 
 const MessageList: React.FC<MessageListProps> = ({ messages, isStreaming, selectedModel }) => {
   // Extract model name from path like "small/gemma-3-1b-it-q4_0.gguf"
-  const getModelDisplayName = () => {
-    if (!selectedModel) return 'Assistant';
-    const fileName = selectedModel.split('/').pop() || '';
+  const getModelDisplayName = (message: Message) => {
+    // Use the model stored in the message, or fall back to selectedModel
+    const modelPath = message.model || selectedModel;
+    if (!modelPath) return 'Assistant';
+    const fileName = modelPath.split('/').pop() || '';
     return fileName.replace('.gguf', '');
   };
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -63,10 +65,10 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isStreaming, select
             <div className="message-content">
               <div className="message-header">
                 <span className="message-role">
-                  {message.role === 'user' ? 'You' : getModelDisplayName()}
+                  {message.role === 'user' ? 'You' : getModelDisplayName(message)}
                 </span>
                 <span className="message-time">
-                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
               <div className="message-text">
@@ -104,7 +106,9 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isStreaming, select
             </div>
             <div className="message-content">
               <div className="message-header">
-                <span className="message-role">{getModelDisplayName()}</span>
+                <span className="message-role">
+                  {selectedModel ? selectedModel.split('/').pop()?.replace('.gguf', '') || 'Assistant' : 'Assistant'}
+                </span>
               </div>
               <div className="typing-indicator">
                 <span></span>

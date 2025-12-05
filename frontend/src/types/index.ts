@@ -3,6 +3,7 @@ export interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
+  model?: string; // Track which model generated this message
 }
 
 export interface Conversation {

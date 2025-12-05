@@ -1,17 +1,23 @@
-"""LLM inference placeholder - requires llama-cpp-python installation."""
+"""LLM inference with llama-cpp-python - GPU with CPU fallback."""
 import os
 from pathlib import Path
-from typing import Optional, AsyncGenerator
+from typing import AsyncGenerator
 import logging
 import asyncio
+
+try:
+    from llama_cpp import Llama
+    LLAMA_CPP_AVAILABLE = True
+except ImportError:
+    LLAMA_CPP_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
 # Get models directory
 MODELS_DIR = Path(os.getenv("MODELS_DIR", "../models"))
 
-# Cache loaded models (placeholder: dict instead of Llama objects)
-_loaded_models: dict[str, dict] = {}
+# Cache loaded models
+_loaded_models: dict[str, "Llama"] = {}
 
 
 def get_model_path(model_id: str) -> Path:
@@ -19,21 +25,23 @@ def get_model_path(model_id: str) -> Path:
     return MODELS_DIR / model_id
 
 
-def load_model(model_id: str, n_ctx: int = 2048, n_gpu_layers: int = 0) -> dict:
+def load_model(model_id: str, n_ctx: int = 4096, n_gpu_layers: int = -1) -> "Llama":
     """
-    Placeholder for model loading.
-    TODO: Install llama-cpp-python with Visual Studio C++ Build Tools to enable actual inference.
+    Load a GGUF model with GPU acceleration (fallback to CPU if GPU unavailable).
     
     Args:
         model_id: Model ID in format "category/filename.gguf"
-        n_ctx: Context window size
-        n_gpu_layers: Number of layers to offload to GPU (0 for CPU only)
+        n_ctx: Context window size (default 4096)
+        n_gpu_layers: Number of layers to offload to GPU (-1 = all layers, 0 = CPU only)
     
     Returns:
-        Placeholder model dict
+        Loaded Llama model instance
     """
+    if not LLAMA_CPP_AVAILABLE:
+        raise RuntimeError("llama-cpp-python is not installed. Cannot load model.")
+    
     if model_id in _loaded_models:
-        logger.info(f"Model {model_id} already loaded (placeholder)")
+        logger.info(f"Model {model_id} already loaded")
         return _loaded_models[model_id]
     
     model_path = get_model_path(model_id)
@@ -41,12 +49,36 @@ def load_model(model_id: str, n_ctx: int = 2048, n_gpu_layers: int = 0) -> dict:
     if not model_path.exists():
         raise FileNotFoundError(f"Model file not found: {model_path}")
     
-    logger.warning(f"Using placeholder for model {model_id} - llama-cpp-python not installed")
-    logger.info(f"Model file exists at: {model_path}")
+    logger.info(f"Loading model {model_id} from {model_path}")
+    logger.info(f"Context size: {n_ctx}, GPU layers: {n_gpu_layers}")
     
-    # Store placeholder
-    _loaded_models[model_id] = {"id": model_id, "path": str(model_path)}
-    return _loaded_models[model_id]
+    try:
+        # Try loading with GPU support first (n_gpu_layers=-1 uses all available GPU)
+        model = Llama(
+            model_path=str(model_path),
+            n_ctx=n_ctx,
+            n_gpu_layers=n_gpu_layers,
+            verbose=True,  # Show GPU info in logs
+        )
+        logger.info(f"Model {model_id} loaded successfully with GPU layers: {n_gpu_layers}")
+    except Exception as gpu_error:
+        logger.warning(f"Failed to load model with GPU: {gpu_error}")
+        logger.info(f"Falling back to CPU-only mode")
+        try:
+            # Fallback to CPU only
+            model = Llama(
+                model_path=str(model_path),
+                n_ctx=n_ctx,
+                n_gpu_layers=0,  # CPU only
+                verbose=True,
+            )
+            logger.info(f"Model {model_id} loaded successfully on CPU")
+        except Exception as cpu_error:
+            logger.error(f"Failed to load model on CPU: {cpu_error}")
+            raise
+    
+    _loaded_models[model_id] = model
+    return model
 
 
 def unload_model(model_id: str) -> bool:
@@ -74,8 +106,7 @@ async def generate_streaming(
     top_p: float = 0.9,
 ) -> AsyncGenerator[str, None]:
     """
-    Generate streaming chat completions (placeholder implementation).
-    TODO: Install llama-cpp-python to enable actual LLM inference.
+    Generate streaming chat completions using llama-cpp-python.
     
     Args:
         model_id: Model ID to use
@@ -87,29 +118,42 @@ async def generate_streaming(
     Yields:
         Generated tokens as they're produced
     """
+    if not LLAMA_CPP_AVAILABLE:
+        error_msg = "llama-cpp-python is not installed. Cannot generate responses."
+        logger.error(error_msg)
+        yield error_msg
+        return
+    
     try:
-        # Load model (placeholder)
+        # Load model (with GPU support, fallback to CPU)
         model = load_model(model_id)
         
-        # Create prompt from messages
-        prompt = format_chat_prompt(messages)
+        logger.info(f"Generating response for model {model_id}")
+        logger.debug(f"Temperature: {temperature}, Max tokens: {max_tokens}, Top-p: {top_p}")
         
-        logger.warning(f"Using placeholder response - llama-cpp-python not installed")
-        logger.info(f"Would generate response for model {model_id}")
-        logger.debug(f"Prompt: {prompt[:100]}...")
+        # Use create_chat_completion which handles the chat template automatically
+        stream = model.create_chat_completion(
+            messages=messages,
+            max_tokens=max_tokens,
+            temperature=temperature,
+            top_p=top_p,
+            stream=True,
+        )
         
-        # Placeholder response with streaming simulation
-        user_message = messages[-1].get('content', '') if messages else ''
-        placeholder_response = f"I'm a placeholder response from {model_id}. To enable actual LLM inference, please install llama-cpp-python with Visual Studio C++ Build Tools. Your message was: {user_message}"
-        
-        # Simulate streaming by yielding word by word
-        words = placeholder_response.split()
-        for word in words:
-            yield word + " "
-            await asyncio.sleep(0.05)  # Simulate generation delay
+        # Yield tokens as they're generated
+        for output in stream:
+            if "choices" in output and len(output["choices"]) > 0:
+                choice = output["choices"][0]
+                # For chat completion, use 'delta' -> 'content'
+                if "delta" in choice and "content" in choice["delta"]:
+                    token = choice["delta"]["content"]
+                    yield token
+                    await asyncio.sleep(0)  # Allow other coroutines to run
                     
     except Exception as e:
         logger.error(f"Error during generation: {e}")
+        error_msg = f"Error: {str(e)}"
+        yield error_msg
         raise
 
 
