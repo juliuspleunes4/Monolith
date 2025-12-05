@@ -9,3 +9,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - 2025-12-05: Created copilot-instructions.md with project architecture, guidelines, and development standards
 - 2025-12-05: Initialized CHANGELOG.md for tracking project changes
+- 2025-12-05: Added design guidelines to copilot-instructions.md (clean/minimal UI, chatbot-style interface)

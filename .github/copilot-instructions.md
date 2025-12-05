@@ -70,6 +70,15 @@ Monolith/
 - Error boundaries and loading states
 - Accessible UI (WCAG 2.1 AA)
 
+### Design Guidelines
+- **Style**: Clean and minimal aesthetic - no rainbow gradients or flashy effects
+- **Inspiration**: Follow established chatbot UI patterns (ChatGPT, Claude, Grok)
+- **Icons**: Use icons throughout the interface where appropriate (model selector, settings, new chat, etc.)
+- **Color Scheme**: Neutral, professional palette with subtle accents
+- **Typography**: Clear, readable fonts with proper hierarchy
+- **Layout**: Sidebar for conversations, main chat area, clean message bubbles
+- **Dark Mode**: Support both light and dark themes
+
 ### LLM Integration
 - Support for multiple models simultaneously
 - Streaming token generation
