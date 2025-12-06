@@ -16,7 +16,7 @@
 
 [Features](#-features) • [Quick Start](#-quick-start-docker---recommended) • [Manual Setup](#-manual-setup-without-docker) • [Docker Guide](docs/DOCKER.md) • [Development](#-development)
 
-![Monolith Screenshot](https://via.placeholder.com/800x450/1a1a1a/5170ff?text=Monolith+Chat+Interface)
+![Monolith Screenshot](assets/monolith_ui_screenshot.jpeg)
 
 </div>
 
@@ -40,24 +40,24 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         Docker Compose                           │
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────────────┐│
-│  │   Frontend   │   │   Backend    │   │   Ollama + GPU       ││
-│  │   (nginx)    │◄─►│   (FastAPI)  │◄─►│   deepseek-r1:8b     ││
-│  │   Port 3000  │   │   Port 8000  │   │   Port 11434         ││
-│  └──────────────┘   └──────────────┘   └──────────────────────┘│
-│         │                   │                      │             │
-│         │                   │                      ▼             │
-│         │                   │              ┌──────────────┐      │
-│         │                   │              │ NVIDIA GPU   │      │
-│         │                   │              │ CUDA Runtime │      │
-│         │                   ▼              └──────────────┘      │
-│         │           ┌──────────────┐                             │
-│         │           │  Persistent  │                             │
-│         │           │   Volumes    │                             │
-│         └───────────┤ • Chat Data  │                             │
-│                     │ • Models     │                             │
-│                     └──────────────┘                             │
+│                         Docker Compose                          │
+│  ┌──────────────┐   ┌──────────────┐   ┌──────────────────────┐ │
+│  │   Frontend   │   │   Backend    │   │   Ollama + GPU       │ │
+│  │   (nginx)    │◄─►│   (FastAPI)  │◄─►│   deepseek-r1:8b     │ │
+│  │   Port 3000  │   │   Port 8000  │   │   Port 11434         │ │
+│  └──────────────┘   └──────────────┘   └──────────────────────┘ │
+│         │                   │                      │            │
+│         │                   │                      ▼            │
+│         │                   │              ┌──────────────┐     │
+│         │                   │              │ NVIDIA GPU   │     │
+│         │                   │              │ CUDA Runtime │     │
+│         │                   ▼              └──────────────┘     │
+│         │           ┌──────────────┐                            │
+│         │           │  Persistent  │                            │
+│         │           │   Volumes    │                            │
+│         └───────────┤ • Chat Data  │                            │
+│                     │ • Models     │                            │
+│                     └──────────────┘                            │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
